@@ -33,6 +33,10 @@ All progress will be logged in `/devlog`. Follow the journey or contribute!
 | `docs/`      | Design plans, roadmap, architecture decisions           |
 | `devlog/`    | Daily journal of progress, chaos, and existential dread |
 
+### 📚 Docs
+
+🛣️ [Roadmap](./docs/roadmap.md) – See what's coming next in the Goblinverse!
+
 ---
 
 👋 Created by [gpapachr](https://github.com/gpapachr) – fueled by sarcasm, caffeine, and a deep hatred for fragile test suites.
