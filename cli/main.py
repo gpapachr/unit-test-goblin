@@ -17,11 +17,29 @@ def analyze_folder(folder_path: str):
         print(f"\n📂 Analyzing: {file_path}")
         try:
             result = parse_java_file(file_path)
+            
+            clean_count = 0
+            smelly_count = 0
+
             for method in result.methods:
-                print(f"  🧪 {method.method_name}")
-                print(f"    ✅ Assertions: {method.assertion_count}")
-                for smell in method.smells:
-                    print(f"    👹 Smell: {smell.value}")
+                print(f"\n   🧪 {method.method_name}")
+                
+                if method.smells:
+                    smelly_count += 1
+                    print("      👹 Smells:")
+                    for smell in method.smells:
+                        print(f"         - {smell.value}")
+                else:
+                    clean_count += 1
+                    print(f"      ✅ Assertions: {method.assertion_count}")
+                    print("      😇 No smells detected")
+
+            # After all methods in a file
+            print("\n🧾 Summary:")
+            print(f"   • {len(result.methods)} test method(s)")
+            print(f"   • {clean_count} clean")
+            print(f"   • {smelly_count} suspicious")
+
         except Exception as e:
             print(f"⛔️ Failed to parse {file_path}: {e}")
 
