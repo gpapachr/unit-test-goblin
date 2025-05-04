@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List
-from goblin.smell_types import SmellType
-from goblin.detector import detect_smells
 
-import os
 import javalang
+
+from goblin.detector import detect_smells
+from goblin.smell_types import SmellType
+
 
 @dataclass
 class TestMethod:
@@ -34,6 +35,7 @@ def parse_java_file(file_path: str) -> TestClass:
     test_methods = []
 
     for method in class_declaration.methods:
+        print(method)
         method_name = method.name
         annotations = [annotation.name for annotation in method.annotations]
         body = method.body or []

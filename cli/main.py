@@ -1,47 +1,61 @@
-import os
 import argparse
-from goblin.analyzer import parse_java_file
-from goblin.detector import detect_smells
+import json
+import os
+from dataclasses import asdict
 
-def analyze_folder(folder_path: str):
+from goblin.analyzer import parse_java_file
+
+
+def analyze_folder(folder_path: str, json_output=False):
     java_files = []
+    results = []
 
     for root, _, files in os.walk(folder_path):
         for file in files:
             if file.endswith(".java"):
                 java_files.append(os.path.join(root, file))
+                file_path = os.path.join(root, file)
+                try:
+                    test_class = parse_java_file(file_path)
+                    results.append({
+                        "file": file_path,
+                        "class": test_class.class_name,
+                        "methods": [asdict(m) for m in test_class.methods]
+                    })
+                except Exception as e:
+                    results.append({
+                        "file": file_path,
+                        "error": str(e)
+                    })
 
     print(f"Found {len(java_files)} Java file(s).")
 
-    for file_path in java_files:
-        print(f"\n📂 Analyzing: {file_path}")
-        try:
-            result = parse_java_file(file_path)
+    if json_output:
+        print(json.dumps(results, indent=2))
+    else:
+        for r in results:
+            if "error" in r:
+                print(f"\n📂❌ Failed to parse {r['file']} due to {r['error'] if r['error'] else 'unknown reason'}")
+                continue
             
-            clean_count = 0
-            smelly_count = 0
-
-            for method in result.methods:
-                print(f"\n   🧪 {method.method_name}")
-                
-                if method.smells:
-                    smelly_count += 1
+            print(f"\n📂 Analyzing: {r['file']}")
+            clean = 0
+            smelly = 0
+            for method in r["methods"]:
+                print(f"\n   🧪 {method['method_name']}")
+                if method["smells"]:
+                    smelly += 1
                     print("      👹 Smells:")
-                    for smell in method.smells:
+                    for smell in method["smells"]:
                         print(f"         - {smell.value}")
                 else:
-                    clean_count += 1
-                    print(f"      ✅ Assertions: {method.assertion_count}")
+                    clean += 1
+                    print(f"      ✅ Assertions: {method['assertion_count']}")
                     print("      😇 No smells detected")
-
-            # After all methods in a file
             print("\n🧾 Summary:")
-            print(f"   • {len(result.methods)} test method(s)")
-            print(f"   • {clean_count} clean")
-            print(f"   • {smelly_count} suspicious")
-
-        except Exception as e:
-            print(f"⛔️ Failed to parse {file_path}: {e}")
+            print(f"   • {len(r['methods'])} test method(s)")
+            print(f"   • {clean} clean")
+            print(f"   • {smelly} suspicious")
 
 def main():
     parser = argparse.ArgumentParser(description="Goblin CLI – Test smell analyzer")
@@ -49,11 +63,12 @@ def main():
 
     analyze_parser = subparsers.add_parser("analyze", help="Analyze Java test files")
     analyze_parser.add_argument("path", help="Path to folder with .java files")
+    analyze_parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
     args = parser.parse_args()
 
     if args.command == "analyze":
-        analyze_folder(args.path)
+        analyze_folder(args.path, json_output=args.json)
     else:
         parser.print_help()
 
