@@ -4,22 +4,6 @@
 
 This roadmap breaks down the phases of building Unit Test Goblin: a CLI tool that analyzes Java unit tests, detects weak or missing coverage, and makes intelligent suggestions to improve test quality.
 
-Day 0 (April 22) = Start of coding phase
-
----
-
-## ⏳ Phase 0: Foundation (April 8–21)
-
-### Goal: Prepare everything to start coding the MVP on Day 0
-
-- [ ]  Set up GitHub repo + folder structure
-- [ ]  Write README + tweet launch
-- [ ]  Set up Notion HQ
-- [ ]  Choose parsing strategy (javalang, tree-sitter, etc.)
-- [ ]  Write out docs (parser flow, test smells)
-- [ ]  Define MVP goals
-- [ ]  Warm up audience with Devlog + posts
-
 ---
 
 ## 🚀 Phase 1: MVP Build
@@ -47,7 +31,7 @@ Day 0 (April 22) = Start of coding phase
 - Add customization via config file
 - Add better output formatting (color, severity, confidence)
 - Support more advanced smell detection (e.g. over-mocking, untested branches)
-- Try running on real-world repos
+- Spock test support (Groovy)
 - Collect feedback from open-source users
 
 ---
@@ -76,7 +60,6 @@ Day 0 (April 22) = Start of coding phase
 
 ## **🧠 Phase “What If…?”**
 
-- Spock test support (Groovy)
 - AI-generated test suggestion assistant
 - Meme output mode that roasts devs with gifs
 - Integration with code review bots
