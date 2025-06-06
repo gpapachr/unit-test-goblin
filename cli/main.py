@@ -4,6 +4,7 @@ import os
 from dataclasses import asdict
 
 from goblin.analyzer import parse_java_file
+from goblin.ascii_logo import GOBLIN_LOGO
 
 
 def analyze_folder(folder_path: str, json_output=False):
@@ -58,6 +59,7 @@ def analyze_folder(folder_path: str, json_output=False):
             print(f"   • {smelly} suspicious")
 
 def main():
+    print(GOBLIN_LOGO)
     parser = argparse.ArgumentParser(description="Goblin CLI – Test smell analyzer")
     subparsers = parser.add_subparsers(dest="command")
 

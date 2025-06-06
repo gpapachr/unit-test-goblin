@@ -35,7 +35,6 @@ def parse_java_file(file_path: str) -> TestClass:
     test_methods = []
 
     for method in class_declaration.methods:
-        print(method)
         method_name = method.name
         annotations = [annotation.name for annotation in method.annotations]
         body = method.body or []
