@@ -2,8 +2,9 @@ from goblin.smell_types import SmellType
 
 
 def smell_no_assertions(method):
-    if method.assertion_count == 0:
-        return SmellType.NO_ASSERTIONS
+    if "TEST" in [a.upper() for a in method.annotations]:
+        if method.assertion_count == 0:
+            return SmellType.NO_ASSERTIONS
 
 def smell_todo_annotation(method):
     if "TODO" in [a.upper() for a in method.annotations]:
