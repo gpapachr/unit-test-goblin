@@ -1,7 +1,9 @@
 import argparse
 import json
 import os
+import sys
 from dataclasses import asdict
+import toml
 
 from goblin.analyzer import parse_java_file
 from goblin.ascii_logo import GOBLIN_LOGO
@@ -58,10 +60,24 @@ def analyze_folder(folder_path: str, json_output=False):
             print(f"   • {clean} clean")
             print(f"   • {smelly} suspicious")
 
+def get_version():
+    pyproject_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pyproject.toml"))
+    try:
+        data = toml.load(pyproject_path)
+        return data["tool"]["poetry"]["version"]
+    except Exception as e:
+        raise RuntimeError(f"Could not read version from pyproject.toml: {e}")
+
 def main():
     print(GOBLIN_LOGO)
-    parser = argparse.ArgumentParser(description="Goblin CLI – Test smell analyzer")
-    subparsers = parser.add_subparsers(dest="command")
+    parser = argparse.ArgumentParser(
+        prog="goblin",
+        description="Goblin: A simple unit test runner for Python projects.",
+        epilog="Examples:\n  goblin analyze ./examples\n  goblin --version\n  goblin --help",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--version", action="store_true", help="Show Goblin CLI version")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     analyze_parser = subparsers.add_parser("analyze", help="Analyze Java test files")
     analyze_parser.add_argument("path", help="Path to folder with .java files")
@@ -69,10 +85,22 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "analyze":
+    if args.version:
+        try:
+            version = get_version()
+            print(f"Goblin CLI version: {version}")
+            sys.exit(0)
+        except RuntimeError as e:
+            print(e)
+            sys.exit(1)
+    elif args.command == "analyze":
         analyze_folder(args.path, json_output=args.json)
+        sys.exit(0)
+    elif args.command is None:
+        print("Error: No subcommand provided. Use '--help' to see available commands.")
+        parser.print_help()
+        sys.exit(1)
     else:
         parser.print_help()
-
 if __name__ == "__main__":
     main()

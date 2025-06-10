@@ -1,4 +1,10 @@
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = py39
+# "E" for error codes, "F" for formatting issues, "I" for import-related issues
 select = ["E", "F", "I"]
+name = "goblin-cli"
+name = "unit-test-goblin"
+version = "0.1.0"
+description = "A CLI tool for automating and managing Python unit tests with enhanced reporting and debugging features (development version)"
+authors = ["gpapachr"]
