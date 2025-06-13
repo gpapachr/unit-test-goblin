@@ -8,6 +8,13 @@ import toml
 from goblin.analyzer import parse_java_file
 from goblin.ascii_logo import GOBLIN_LOGO
 
+from rich.console import Console
+from rich.text import Text
+from rich.panel import Panel
+
+from goblin.shame_o_meter import shame_insult
+
+console = Console()
 
 def analyze_folder(folder_path: str, json_output=False):
     java_files = []
@@ -38,27 +45,32 @@ def analyze_folder(folder_path: str, json_output=False):
     else:
         for r in results:
             if "error" in r:
-                print(f"\n📂❌ Failed to parse {r['file']} due to {r['error'] if r['error'] else 'unknown reason'}")
+                print(f"\n📂❌ Failed to parse {r['file']} due to {r['error'] if r['error'] else 'Java syntax issues'}")
                 continue
             
-            print(f"\n📂 Analyzing: {r['file']}")
+            console.print(f"📂 [bold cyan]Analyzing:[/] {r['file']}")
             clean = 0
             smelly = 0
             for method in r["methods"]:
-                print(f"\n   🧪 {method['method_name']}")
                 if method["smells"]:
                     smelly += 1
-                    print("      👹 Smells:")
+                    console.print(f"   🧪 [bold]{method['method_name']}[/]", style="yellow")
+                    console.print("      👹 [bold red]Smells detected![/]")
                     for smell in method["smells"]:
                         print(f"         - {smell.value}")
                 else:
                     clean += 1
-                    print(f"      ✅ Assertions: {method['assertion_count']}")
-                    print("      😇 No smells detected")
-            print("\n🧾 Summary:")
-            print(f"   • {len(r['methods'])} test method(s)")
-            print(f"   • {clean} clean")
-            print(f"   • {smelly} suspicious")
+                    console.print(f"   🧪 [green]{method['method_name']}[/] – [bold green]Clean![/]")
+            console.print(Panel.fit(
+                f"[bold white]🧾 Summary:[/]\n"
+                f"• Total methods: {len(r['methods'])}\n"
+                f"• ✅ Clean: {clean}\n"
+                f"• 👹 Smelly: {smelly}",
+                title="Analysis Result",
+                subtitle="Goblin Summary",
+                border_style="magenta"
+            ))
+            console.print(f"\n[italic red]{shame_insult(smelly, len(r['methods']))}[/]")
 
 def get_version():
     pyproject_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pyproject.toml"))
