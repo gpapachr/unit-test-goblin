@@ -2,6 +2,8 @@
 
 A CLI tool that analyzes your unit tests and codebase to detect weak test coverage, redundant cases, and untested logic paths. Because your tests _aren’t as good as you think_.
 
+![Goblin CLI Output](./assets/goblin-cli-screenshot.png)
+
 ## Why?
 
 Most test suites lie. They pass when they shouldn't, cover when they shouldn't, and leave edge cases to die in the cold. Goblin helps you:
@@ -22,10 +24,6 @@ Most test suites lie. They pass when they shouldn't, cover when they shouldn't, 
 ```bash
 $ goblin analyze ./path/to/your/code
 ```
-
-## Devlog
-
-All progress will be logged in `/devlog`. Follow the journey or contribute!
 
 ### 📁 Folder Overview
 
