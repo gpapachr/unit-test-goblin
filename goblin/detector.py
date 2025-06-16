@@ -1,5 +1,9 @@
+import re
 from goblin.smell_types import SmellType
 
+IGNORED_NAME_PATTERNS = [
+    r"^setup", r"^helper", r"^init", r"^cleanup", r"^tearDown"
+]
 
 def smell_no_assertions(method):
     if "TEST" in [a.upper() for a in method.annotations]:
@@ -31,8 +35,15 @@ SMELL_RULES = [
     smell_no_annotation
 ]
 
+def is_helper_method(method):
+    if "TEST" in (a.upper() for a in method.annotations):
+        return False
+    return any(re.search(pattern, method.method_name) for pattern in IGNORED_NAME_PATTERNS)
+
 def detect_smells(method):
     smells = []
+    if is_helper_method(method):
+        return smells
     for rule in SMELL_RULES:
         result = rule(method)
         if result:

@@ -41,4 +41,15 @@ public class ExampleTest {
         assertEquals(6, 3 + 3);
         System.out.println("This test has multiple assertions");
     }
+
+    public void setupMethod() {
+        // This is a setup-like method without @Test annotation
+        System.out.println("Setup method called");
+    }
+
+    @Test
+    public void setupTestMethod() {
+        // This is a setup-like method with @Test annotation
+        System.out.println("Setup test method called");
+    }
 }
