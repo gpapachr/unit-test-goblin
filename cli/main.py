@@ -13,12 +13,23 @@ from rich.text import Text
 from rich.panel import Panel
 
 from goblin.shame_o_meter import shame_insult
+from goblin.smell_types import SmellType
 
 console = Console()
 
-def analyze_folder(folder_path: str, json_output=False):
+def analyze_folder(folder_path: str, json_output=False, ignored_smells=None):
     java_files = []
     results = []
+    ignored_smells = ignored_smells or []
+    ignored_set = set()
+
+    try:
+        for ignore in ignored_smells:
+            normalized = ignore.replace("-", "_").upper()
+            ignored_set.add(SmellType[normalized])
+    except KeyError:
+        print(f"⚠️ Unknown smell type to ignore: {ignore} ")
+        SmellType.print_available_smell_types()
 
     for root, _, files in os.walk(folder_path):
         for file in files:
@@ -52,6 +63,7 @@ def analyze_folder(folder_path: str, json_output=False):
             clean = 0
             smelly = 0
             for method in r["methods"]:
+                method["smells"] = [smell for smell in method["smells"] if smell not in ignored_set]
                 if method["smells"]:
                     smelly += 1
                     console.print(f"   🧪 [bold]{method['method_name']}[/]", style="yellow")
@@ -94,6 +106,8 @@ def main():
     analyze_parser = subparsers.add_parser("analyze", help="Analyze Java test files")
     analyze_parser.add_argument("path", help="Path to folder with .java files")
     analyze_parser.add_argument("--json", action="store_true", help="Output results as JSON")
+    analyze_parser.add_argument("--ignore", nargs="+", help="List of smell types to ignore (e.g., no-assertions disabled)",
+)
 
     args = parser.parse_args()
 
@@ -106,7 +120,7 @@ def main():
             print(e)
             sys.exit(1)
     elif args.command == "analyze":
-        analyze_folder(args.path, json_output=args.json)
+        analyze_folder(args.path, json_output=args.json, ignored_smells=args.ignore)
         sys.exit(0)
     elif args.command is None:
         print("Error: No subcommand provided. Use '--help' to see available commands.")
