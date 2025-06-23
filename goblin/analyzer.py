@@ -8,7 +8,7 @@ from goblin.smell_types import SmellType
 
 
 @dataclass
-class TestMethod:
+class MethodInfo:
     class_name: str
     method_name: str
     annotations: List[str]
@@ -16,11 +16,11 @@ class TestMethod:
     smells: List[SmellType] = field(default_factory=list)
 
 @dataclass
-class TestClass:
+class ClassInfo:
     class_name: str
-    methods: List[TestMethod]
+    methods: List[MethodInfo]
 
-def parse_java_file(file_path: str) -> TestClass:
+def parse_java_file(file_path: str) -> ClassInfo:
     with open(file_path, 'r') as file:
         source_code = file.read()
 
@@ -47,7 +47,7 @@ def parse_java_file(file_path: str) -> TestClass:
                "assert" in statement.expression.member.lower()
         )
 
-        test_method = TestMethod(
+        test_method = MethodInfo(
             class_name=class_declaration.name,
             method_name=method_name,
             annotations=annotations,
@@ -56,7 +56,7 @@ def parse_java_file(file_path: str) -> TestClass:
         test_method.smells = detect_smells(test_method)
         test_methods.append(test_method)
 
-    return TestClass(
+    return ClassInfo(
         class_name=class_declaration.name,
         methods=test_methods
     )

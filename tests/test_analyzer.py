@@ -6,7 +6,7 @@ def test_parse_example_test_file():
     test_class = parse_java_file(file_path)
 
     assert test_class.class_name == "ExampleTest"
-    assert len(test_class.methods) == 2
+    assert len(test_class.methods) == 8
 
     test_method = test_class.methods[0]
     assert test_method.method_name == "testAddition"
