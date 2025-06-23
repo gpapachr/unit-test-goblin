@@ -16,11 +16,11 @@ def smell_todo_annotation(method):
 
 def smell_disabled(method):
     if "DISABLED" in [a.upper() for a in method.annotations]:
-        return SmellType.DISABLED
+        return SmellType.DISABLED_ANNOTATION
     
 def smell_ignored(method):
     if "IGNORE" in [a.upper() for a in method.annotations]:
-        return SmellType.IGNORED
+        return SmellType.IGNORE_ANNOTATION
 
 def smell_no_annotation(method):
     if (("TEST" in method.method_name.upper()) or method.assertion_count != 0) and ("TEST" not in [a.upper() for a in method.annotations]):
