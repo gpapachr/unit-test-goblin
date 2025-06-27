@@ -3,15 +3,14 @@ import json
 import os
 import sys
 from dataclasses import asdict
+
 import toml
+from rich.console import Console
+from rich.panel import Panel
 
 from goblin.analyzer import parse_java_file
 from goblin.ascii_logo import GOBLIN_LOGO
-
-from rich.console import Console
-from rich.text import Text
-from rich.panel import Panel
-
+from goblin.config import load_config
 from goblin.shame_o_meter import shame_insult
 from goblin.smell_types import SmellType
 
@@ -104,10 +103,9 @@ def main():
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     analyze_parser = subparsers.add_parser("analyze", help="Analyze Java test files")
-    analyze_parser.add_argument("path", help="Path to folder with .java files")
+    analyze_parser.add_argument("path", nargs="?", help="Path to folder with .java files")
     analyze_parser.add_argument("--json", action="store_true", help="Output results as JSON")
-    analyze_parser.add_argument("--ignore", nargs="+", help="List of smell types to ignore (e.g., no-assertions disabled)",
-)
+    analyze_parser.add_argument("--ignore", nargs="+", help="List of smell types to ignore (e.g., no-assertions disabled)")
 
     args = parser.parse_args()
 
@@ -120,7 +118,18 @@ def main():
             print(e)
             sys.exit(1)
     elif args.command == "analyze":
-        analyze_folder(args.path, json_output=args.json, ignored_smells=args.ignore)
+        # Import config and load defaults if needed
+        config = load_config()
+
+        path = args.path if args.path else config.get("default_path")
+        ignored = args.ignore if args.ignore else config.get("ignored", [])
+        json_output = args.json if args.json else config.get("json", False)
+
+        if not path:
+            print("Error: No path specified and no default path found in config.")
+            sys.exit(1)
+
+        analyze_folder(path, json_output=json_output, ignored_smells=ignored)
         sys.exit(0)
     elif args.command is None:
         print("Error: No subcommand provided. Use '--help' to see available commands.")
