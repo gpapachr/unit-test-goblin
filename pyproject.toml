@@ -8,5 +8,8 @@ name = "goblin"
 version = "0.1.0"
 description = "A CLI tool for automating and managing Java unit tests with enhanced reporting and debugging features (development version)"
 authors = ["gpapachr"]
+packages = [
+  { include = "goblin", from = "src" }
+]
 [tool.poetry.scripts]
 goblin = "cli.main:main"

@@ -8,11 +8,11 @@ import toml
 from rich.console import Console
 from rich.panel import Panel
 
-from goblin.analyzer import parse_java_file
-from goblin.ascii_logo import GOBLIN_LOGO
-from goblin.config import load_config
-from goblin.shame_o_meter import shame_insult
-from goblin.smell_types import SmellType
+from src.goblin.analyzer import parse_java_file
+from src.goblin.ascii_logo import GOBLIN_LOGO
+from src.goblin.config import load_config
+from src.goblin.shame_o_meter import shame_insult
+from src.goblin.smell_types import SmellType
 
 console = Console()
 
