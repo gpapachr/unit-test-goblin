@@ -5,7 +5,7 @@ target-version = "py39"
 select = ["E", "F", "I"]
 [tool.poetry]
 name = "goblin"
-version = "0.1.0"
+version = "0.1.1"
 description = "A CLI tool for automating and managing Java unit tests with enhanced reporting and debugging features (development version)"
 authors = ["gpapachr"]
 packages = [
