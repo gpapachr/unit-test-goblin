@@ -6,6 +6,7 @@ DEFAULT_CONFIG = {
     "default_path": str(Path.cwd()),  # defaults to current working directory
     "ignored_smells": [],
     "output_format": "text",  # default CLI output (not JSON)
+    "short_response": False,  # default short response mode
 }
 
 CONFIG_FILE_NAMES = [".goblinrc", "goblin.toml"]

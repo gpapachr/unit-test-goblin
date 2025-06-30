@@ -16,19 +16,22 @@ from goblin.smell_types import SmellType
 
 console = Console()
 
-def analyze_folder(folder_path: str, json_output=False, ignored_smells=None):
+def analyze_folder(folder_path: str, json_output=False, ignored_smells=None, short_response=False):
     java_files = []
     results = []
     ignored_smells = ignored_smells or []
     ignored_set = set()
+    analyzed = 0
+    failed = 0
 
-    try:
-        for ignore in ignored_smells:
+    for ignore in ignored_smells:
+        try:
             normalized = ignore.replace("-", "_").upper()
             ignored_set.add(SmellType[normalized])
-    except KeyError:
-        print(f"⚠️ Unknown smell type to ignore: {ignore} ")
-        SmellType.print_available_smell_types()
+        except KeyError:
+            console.print(f"[red]⚠️ Unknown smell type to ignore: {ignore}[/red]")
+            SmellType.print_available_smell_types()
+            sys.exit(1)
 
     for root, _, files in os.walk(folder_path):
         for file in files:
@@ -42,13 +45,23 @@ def analyze_folder(folder_path: str, json_output=False, ignored_smells=None):
                         "class": test_class.class_name,
                         "methods": [asdict(m) for m in test_class.methods]
                     })
+                    analyzed += 1
                 except Exception as e:
                     results.append({
                         "file": file_path,
                         "error": str(e)
                     })
+                    failed += 1
 
-    print(f"Found {len(java_files)} Java file(s).")
+    if not java_files:
+        console.print("[red]No Java files found in the specified path.[/red]")
+        sys.exit(1)
+    else:
+        console.print(
+            f"[bold magenta]• Total files:[/] [cyan]{len(java_files)}[/] "
+            f"• [green]✅ Loaded:[/] [bold green]{analyzed}[/] "
+            f"• [red]❌ Failed:[/] [bold red]{failed}[/]"
+        )
 
     if json_output:
         print(json.dumps(results, indent=2))
@@ -65,22 +78,19 @@ def analyze_folder(folder_path: str, json_output=False, ignored_smells=None):
                 method["smells"] = [smell for smell in method["smells"] if smell not in ignored_set]
                 if method["smells"]:
                     smelly += 1
-                    console.print(f"   🧪 [bold]{method['method_name']}[/]", style="yellow")
-                    console.print("      👹 [bold red]Smells detected![/]")
-                    for smell in method["smells"]:
-                        print(f"         - {smell.value}")
+                    if not short_response:
+                        console.print(f"   🧪 [bold]{method['method_name']}[/]", style="yellow")
+                        console.print("      👹 [bold red]Smells detected![/]")
+                        for smell in method["smells"]:
+                            print(f"         - {smell.value}")
                 else:
                     clean += 1
                     console.print(f"   🧪 [green]{method['method_name']}[/] – [bold green]Clean![/]")
             console.print(Panel.fit(
-                f"[bold white]🧾 Summary:[/]\n"
-                f"• Total methods: {len(r['methods'])}\n"
-                f"• ✅ Clean: {clean}\n"
-                f"• 👹 Smelly: {smelly}",
-                title="Analysis Result",
-                subtitle="Goblin Summary",
-                border_style="magenta"
-            ))
+                f"📊 Files Processed: {len(java_files)}\n✅ Analyzed: {analyzed}\n❌ Failed: {failed}\n🧪 Methods: {len(r['methods'])}\n😇 Clean: {clean}\n👹 Smelly: {smelly}",
+                title="Goblin File Summary",
+                border_style="blue")
+            )
             console.print(f"\n[italic red]{shame_insult(smelly, len(r['methods']))}[/]")
 
 def get_version():
@@ -92,7 +102,7 @@ def get_version():
         raise RuntimeError(f"Could not read version from pyproject.toml: {e}")
 
 def main():
-    print(GOBLIN_LOGO)
+    console.print(GOBLIN_LOGO, style="green")
     parser = argparse.ArgumentParser(
         prog="goblin",
         description="Goblin: A simple unit test runner for Python projects.",
@@ -106,6 +116,7 @@ def main():
     analyze_parser.add_argument("path", nargs="?", help="Path to folder with .java files")
     analyze_parser.add_argument("--json", action="store_true", help="Output results as JSON")
     analyze_parser.add_argument("--ignore", nargs="+", help="List of smell types to ignore (e.g., no-assertions disabled)")
+    analyze_parser.add_argument("--short", action="store_true", help="Short output format, only show file names and final report")
 
     args = parser.parse_args()
 
@@ -124,15 +135,16 @@ def main():
         path = args.path if args.path else config.get("default_path")
         ignored = args.ignore if args.ignore else config.get("ignored", [])
         json_output = args.json if args.json else config.get("json", False)
+        short_response = args.short if args.short else config.get("short_response", False)
 
         if not path:
-            print("Error: No path specified and no default path found in config.")
+            console.print("[red]Error: No path specified and no default path found in config.[/red]")
             sys.exit(1)
 
-        analyze_folder(path, json_output=json_output, ignored_smells=ignored)
+        analyze_folder(path, json_output=json_output, ignored_smells=ignored, short_response=short_response)
         sys.exit(0)
     elif args.command is None:
-        print("Error: No subcommand provided. Use '--help' to see available commands.")
+        console.print("[red]Error: No subcommand provided. Use '--help' to see available commands.[/red]")
         parser.print_help()
         sys.exit(1)
     else:
