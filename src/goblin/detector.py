@@ -1,5 +1,5 @@
 import re
-from goblin.smell_types import SmellType
+from src.goblin.smell_types import SmellType
 
 IGNORED_NAME_PATTERNS = [
     r"^setup", r"^helper", r"^init", r"^cleanup", r"^tearDown"

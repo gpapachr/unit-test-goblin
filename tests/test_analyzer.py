@@ -1,5 +1,5 @@
 import os
-from goblin.analyzer import parse_java_file
+from src.goblin.analyzer import parse_java_file
 
 def test_parse_example_test_file():
     file_path = os.path.join("examples", "ExampleTest.java")
