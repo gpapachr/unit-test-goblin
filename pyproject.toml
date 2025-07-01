@@ -4,8 +4,8 @@ target-version = "py39"
 # "E" for error codes, "F" for formatting issues, "I" for import-related issues
 select = ["E", "F", "I"]
 [tool.poetry]
-name = "goblin"
-version = "0.1.1"
+name = "goblin-cli"
+version = "0.1.2"
 description = "A CLI tool for automating and managing Java unit tests with enhanced reporting and debugging features (development version)"
 authors = ["gpapachr"]
 packages = [
