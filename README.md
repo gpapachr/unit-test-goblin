@@ -16,10 +16,13 @@ Most test suites lie. They pass when they shouldn't, cover when they shouldn't, 
 
 - Parse code and test files
 - Detect empty or redundant tests
+
+## Next Steps
+
 - Identify missing logical branches
 - Suggest better coverage
 
-## Usage (soon)
+## Usage
 
 ```bash
 $ goblin analyze ./path/to/your/code
@@ -28,15 +31,15 @@ $ goblin analyze ./path/to/your/code
 ### 📁 Folder Overview
 
 | Folder    | Purpose                                               |
-| --------- | ----------------------------------------------------- |
+|-----------|-------------------------------------------------------|
 | `goblin/` | Core logic: parsing, detecting, and shaming bad tests |
-| `cli/`    | CLI entry point – run the Goblin from your terminal   |
 | `tests/`  | Unit tests _for the Goblin itself_                    |
 | `docs/`   | Design plans, roadmap, architecture decisions         |
 
 ### 📚 Docs
 
-🛣️ [Roadmap](./docs/roadmap.md) – See what's coming next in the Goblinverse!
+[Roadmap](./docs/roadmap.md) – See what's coming next in the Goblinverse!
+[Virtual Environment](./docs/virtual-environment.md) – Lessons learned about dev environment for Goblin development.
 
 ---
 

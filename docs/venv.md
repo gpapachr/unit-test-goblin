@@ -56,7 +56,7 @@ pip install -r requirements.txt
 4.  Run your project
 
 ```bash
-python cli/main.py analyze examples/
+python python src/cli.py analyze examples/ analyze examples/
 ```
 
 5.  Deactivate when done
