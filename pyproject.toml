@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-goblin = "cli.main:main"
+goblin = "goblin.cli:main"
 
 [project.optional-dependencies]
 dev = [

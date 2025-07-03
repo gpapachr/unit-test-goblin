@@ -1,6 +1,6 @@
-from src.goblin.detector import detect_smells
-from src.goblin.smell_types import SmellType
-from src.goblin.analyzer import MethodInfo
+from goblin.detector import detect_smells
+from goblin.smell_types import SmellType
+from goblin.analyzer import MethodInfo
 
 CLASS_NAME = "TestClass"
 METHOD_NAME = "testMethod"

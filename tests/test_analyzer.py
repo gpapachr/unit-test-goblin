@@ -1,8 +1,10 @@
 import os
-from src.goblin.analyzer import parse_java_file
+
+from goblin.analyzer import parse_java_file
+
 
 def test_parse_example_test_file():
-    file_path = os.path.join("examples", "ExampleTest.java")
+    file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../examples/ExampleTest.java"))
     test_class = parse_java_file(file_path)
 
     assert test_class.class_name == "ExampleTest"
