@@ -1,6 +1,6 @@
 [project]
 name = "goblin-cli"
-version = "0.1.3"
+version = "0.1.4"
 description = "A CLI tool for automating and managing Java unit tests with enhanced reporting and debugging features (development version)"
 authors = [{ name = "gpapachr" }]
 readme = "README.md"
