@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from dataclasses import asdict
+from pathlib import Path
 
 import toml
 from rich.console import Console
@@ -94,12 +95,13 @@ def analyze_folder(folder_path: str, json_output=False, ignored_smells=None, sho
             console.print(f"\n[italic red]{shame_insult(smelly, len(r['methods']))}[/]")
 
 def get_version():
-    pyproject_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pyproject.toml"))
-    try:
-        data = toml.load(pyproject_path)
-        return data["tool"]["poetry"]["version"]
-    except Exception as e:
-        raise RuntimeError(f"Could not read version from pyproject.toml: {e}")
+    current_dir = Path(__file__).resolve()
+    for parent in current_dir.parents:
+        pyproject = parent / "pyproject.toml"
+        if pyproject.exists():
+            data = toml.load(pyproject)
+            return data["project"]["version"]
+    raise RuntimeError("Error during version retrieval")
 
 def main():
     console.print(GOBLIN_LOGO, style="green")
@@ -133,7 +135,7 @@ def main():
         config = load_config()
 
         path = args.path if args.path else config.get("default_path")
-        ignored = args.ignore if args.ignore else config.get("ignored", [])
+        ignored = args.ignore if args.ignore else config.get("ignored_smells", [])
         json_output = args.json if args.json else config.get("json", False)
         short_response = args.short if args.short else config.get("short_response", False)
 
